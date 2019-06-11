@@ -16,16 +16,17 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.RequestFuture
 import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_loginactivity.*
 import kotlinx.android.synthetic.main.activity_loginactivity.btn_register
 import kotlinx.android.synthetic.main.activity_registeractivity.*
 import org.json.JSONObject
 
 class Registeractivity : AppCompatActivity() {
-var username :String?=""
-    var password:String?=""
-    var email:String?=""
-    var gender:String?=""
+lateinit var username :String
+  lateinit  var  password :String
+   lateinit var email:String
+lateinit   var gender:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,27 +35,28 @@ var username :String?=""
         var  sharedPrefManager = SharedPrefManager(this)
         if (sharedPrefManager.getInstance(this).isLoggedIn())
         {
+finish()
 
-            finish()
-            this!!.startActivity(Intent(this, MainActivity::class.java))
+            this.startActivity(Intent(this, MainActivity::class.java))
             return
         }
         btn_regist.setOnClickListener {
-            if (TextUtils.isEmpty(username) && TextUtils.isEmpty(password) && TextUtils.isEmpty(email)){
-
-                Toast.makeText(this,"All Fields Must be filled First", Toast.LENGTH_SHORT).show()
-
-            }else{
-
-
-                registerUser()
-            }
+//            if (TextUtils.isEmpty(username) && TextUtils.isEmpty(password) && TextUtils.isEmpty(email)){
+//
+//                Toast.makeText(this,"All Fields Must be filled First", Toast.LENGTH_SHORT).show()
+//
+//            }else{
+//
+//
+//                registerUser()
+//            }
+            registerUser()
 
 
 
 
         }
-        registerUser()
+      //  registerUser()
 
 
 
@@ -70,6 +72,8 @@ var username :String?=""
 
         //radio.checkedRadioButtonId./
 
+        radio1.check(R.id.male)
+
         val v:RadioButton=findViewById(radio1.checkedRadioButtonId)
        gender= v.text.toString()
 Log.d("Gender",gender)
@@ -80,27 +84,30 @@ Log.d("Gender",gender)
 
 
 
-        var url: URLs? = null
+        var url = URLs()
         val params = HashMap<String,String>()
-        params["username"] = "username"
-        params["password"] = "password"
-        params["email"] = "email"
-        params["gender"] = "gender"
+        params["username"] = username
+        params["password"] = password
+        params["email"] = email
+        params["gender"] = gender
 
         val jsonObject = JSONObject(params)
 // Volley post request with parameters
-        val request = JsonObjectRequest(Request.Method.POST,url!!.URL_LOGIN,jsonObject,
+        val request = JsonObjectRequest(Request.Method.POST,url.URL_REGISTER,jsonObject,
             Response.Listener {
                 // Process the json
-                this!!.startActivity(Intent(this, MainActivity::class.java))
+                this.startActivity(Intent(this, MainActivity::class.java))
 
             }, Response.ErrorListener{
                 // Error in request
                 Log.d("Log in Error","Error While logging in")
                // textView.text = "Volley error: $it"
             })
-        var volleySingleton: VolleySingleton?=null
-        volleySingleton!!.getInstance(this).addToRequestQueue(request)
+        /*var volleySingleton= VolleySingleton(this)
+        volleySingleton.getInstance(this).addToRequestQueue(request)*/
+
+
+        Volley.newRequestQueue(this).add(request)
 
     }
 
